@@ -1,9 +1,12 @@
 # Basic moneyline arbitrage bet finder program 
 # calculates the discrepancies in odds across different bookmakers provided by user input and returns the arbitrage opportunities
 # for more info on arbitrage betting: https://en.wikipedia.org/wiki/Arbitrage_betting
+import arbitrage
+import betting_odds_calculator
+import arbitrage_calculator
+
 
 # variables
-
 first_run = True
 # create a collection of bet spaces
 # create a collection of bets
@@ -64,7 +67,7 @@ def bet_calculator_menu():
     print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Exit\n")
 
     # list of valid inputs for each of the three options
-    boc_options = ["betting odds calculator", "betting odds", "betting", "bet" "1", "one"]
+    boc_options = ["betting odds calculator", "betting odds", "betting", "bet", "1", "one"]
     ac_options = ["arbitrage calculator", "arbitrage", "arb", "2", "two"]
     quit_options = ["quit", "3", "three", "leave", "exit"]
     # forever loop prompts user input for the options, handles each option and repeats prompt on invalid input
@@ -74,17 +77,56 @@ def bet_calculator_menu():
 
         # handling user input for respective calculators
         if selected_calc_option in boc_options:
-            create_bet_space_menu()
+            betting_odds_calculator_menu()
         elif selected_calc_option in ac_options:
-            visit_bet_space_menu()
+            arbitrage_calculator_menu()
         elif selected_calc_option in quit_options:
             # displays main menu options before ending function call and going back to main menu loop 
             print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Bet Calculators\n[4] Quit\n")
             return
         else:
             print("\nThat is not a valid option. Please try again.")
-            print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Bet Calculators\n[4] Quit\n")
-    
+            print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Exit\n")
+
+# function for entering the betting odds calculator 
+def betting_odds_calculator_menu():
+    # declaring the initial odds and stake floats
+    odds = 0.0
+    stake = 0.0
+
+    print("\nPlease enter the decimal odds:")
+    while True:
+        try:
+            odds = float(input("\u001b[90m> \u001b[0m"))
+        except: pass
+        if odds > 0:
+            print("\nPlease enter the stake amount:")
+            while True:
+                try:
+                    stake = float(input("\u001b[90m> \u001b[0m"))
+                except: pass
+                if stake > 0:
+                    # create new betting odds calculator object with given odds, stake
+                    new_bet = betting_odds_calculator.BettingOddsCalculator(odds, stake)
+                    
+                    # calculate payout and put it in dollar form
+                    payout = new_bet.calculate_payout()
+                    formatted_payout = "${:,.2f}".format(payout)
+
+                    # print results
+                    print("\nPayout: \u001b[32m" + formatted_payout + "\u001b[0m")
+
+                    # shows main menu options before going back
+                    print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Exit\n")
+                    return
+                else:
+                    print("\nInvalid stake (must be a float greater than 0 with no dollar sign). Please try again:\n")
+        else:
+            print("\nInvalid odds (must be a float greater than 0). Please try again:\n")
+
+# function for entering the arbitrage calculator 
+def arbitrage_calculator_menu():
+    print("")
 
 # starts program
 run()
