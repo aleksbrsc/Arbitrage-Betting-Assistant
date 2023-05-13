@@ -17,3 +17,20 @@ class ArbitrageCalculator:
             stake = round((self.stake * implied_probability) / total_implied_probability, 2)
             hedged_stakes.append(stake)
         return hedged_stakes
+    
+    def calculate_payout(self):
+        hedged_stakes = self.calculate_hedged_stakes()
+        pnl = hedged_stakes[0] * self.odds_list[0]
+        return pnl
+
+    def calculate_pnl(self):
+        hedged_stakes = self.calculate_hedged_stakes()
+        pnl = (hedged_stakes[0] * self.odds_list[0]) - self.stake
+        return pnl
+    
+    def calculate_roi(self):
+        payout = self.calculate_payout()
+        roi = (payout/self.stake) - 1
+        return roi
+
+        

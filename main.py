@@ -109,20 +109,22 @@ def betting_odds_calculator_menu():
             odds_loop = False
         else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:\n")
 
-    # calculate bet
+    # enter odds
     print("\nPlease enter the odds:")
     while True:
         try:
             odds = float(input("\u001b[90m> \u001b[0m"))
         except: pass
+        # validates the odds in the user-input list
         if (odds_type == "decimal" and odds > 1) or (odds_type == 'american' and (odds < -100 or 100 < odds)):
+            # enter stake
             print("\nPlease enter the stake amount:")
             while True:
                 try:
                     stake = float(input("\u001b[90m> \u001b[0m"))
                 except: pass
                 if stake > 0:
-                    # convert odds to decimal if type is american
+                    # convert odds to decimal if odds type is american
                     if odds_type == 'american':
                         odds = american_to_decimal(odds)
 
@@ -147,7 +149,7 @@ def betting_odds_calculator_menu():
             elif odds_type == "american":
                 print("\nInvalid odds (american odds must be greater than 100 or less than -100). Please try again:\n")
 
-# function for converting american odds to decimal odds
+# converts american odds to decimal odds
 def american_to_decimal(odds):
     if odds >= 0:
         decimal_odds = 1 + (odds / 100)
@@ -155,7 +157,14 @@ def american_to_decimal(odds):
         decimal_odds = 1 + (100 / abs(odds))
     return decimal_odds
 
-# function for entering the arbitrage calculator 
+# takes a list and returns new list in dollar form
+def format_list_to_dollar(list):
+    formatted_list = []
+    for num in list:
+        formatted_list.append("${:,.2f}".format(num))
+    return formatted_list
+
+# lets user figure out arbitrage information based on their bets with any set of odds and stake 
 def arbitrage_calculator_menu():
     # declaring local variables
     stake = 0
@@ -221,18 +230,33 @@ def arbitrage_calculator_menu():
                             # perform the calculations on variables
                             total_implied_probability = arb_calc.calc_total_implied_probability()
                             hedged_stakes = arb_calc.calculate_hedged_stakes()
+                            payout = arb_calc.calculate_payout()
+                            pnl = arb_calc.calculate_pnl()
+                            roi = arb_calc.calculate_roi()
 
                             # variable for whether arbitrage opportunity or not
-                            is_arbitrage = "(not an arbitrage)" # default message
+                            is_arbitrage = "\u001b[31m(not an arbitrage opportunity)\u001b[0m" # default message
                             if total_implied_probability < 1:
-                                is_arbitrage = "(is an arbitrage)"
+                                is_arbitrage = "\u001b[32m(arbitrage opportunity)\u001b[0m"
 
                             # display formatted arb results
                             formatted_total_implied_probability = "{:.2%}".format(total_implied_probability)
                             # TODO: ADD FORMATTING HERE FOR HEDGED STAKES
+                            formatted_payout = "${:.2f}".format(payout)
+                            formatted_pnl = "${:.2f}".format(pnl)
+                            formatted_roi = "{:.2%}".format(roi)
+                            
 
                             print("\nTotal Implied Probability:", formatted_total_implied_probability, is_arbitrage)
                             print("Respective Hedged Stakes:", hedged_stakes) # TODO: REPLACE WITH FORMATTED HEDGED STAKES
+                            print("Payout:", formatted_payout)
+                            if pnl > 0:
+                                print("PNL:\u001b[32m", formatted_pnl, "\u001b[0m")
+                            elif pnl < 0:
+                                print("PNL:\u001b[31m", formatted_pnl, "\u001b[0m")
+                            else:
+                                print("PNL:", formatted_pnl)
+                            print("ROI:", formatted_roi)
 
                             # # display formatted arb results
                             # print(f"Arbitrage percentage: {arb_percentage:.2f}%")
