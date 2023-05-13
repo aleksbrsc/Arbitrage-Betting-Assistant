@@ -164,6 +164,10 @@ def format_list_to_dollar(list):
         formatted_list.append("${:,.2f}".format(num))
     return formatted_list
 
+# takes list and returns string with comma-separated contents
+def list_to_string(lst):
+    return ", ".join(str(x) for x in lst)
+
 # lets user figure out arbitrage information based on their bets with any set of odds and stake 
 def arbitrage_calculator_menu():
     # declaring local variables
@@ -241,14 +245,13 @@ def arbitrage_calculator_menu():
 
                             # display formatted arb results
                             formatted_total_implied_probability = "{:.2%}".format(total_implied_probability)
-                            # TODO: ADD FORMATTING HERE FOR HEDGED STAKES
+                            formatted_hedged_stakes = list_to_string(format_list_to_dollar(hedged_stakes))
                             formatted_payout = "${:.2f}".format(payout)
                             formatted_pnl = "${:.2f}".format(pnl)
                             formatted_roi = "{:.2%}".format(roi)
-                            
 
                             print("\nTotal Implied Probability:", formatted_total_implied_probability, is_arbitrage)
-                            print("Respective Hedged Stakes:", hedged_stakes) # TODO: REPLACE WITH FORMATTED HEDGED STAKES
+                            print("Respective Hedged Stakes:", formatted_hedged_stakes) # TODO: REPLACE WITH FORMATTED HEDGED STAKES
                             print("Payout:", formatted_payout)
                             if pnl > 0:
                                 print("PNL:\u001b[32m", formatted_pnl, "\u001b[0m")
@@ -257,10 +260,6 @@ def arbitrage_calculator_menu():
                             else:
                                 print("PNL:", formatted_pnl)
                             print("ROI:", formatted_roi)
-
-                            # # display formatted arb results
-                            # print(f"Arbitrage percentage: {arb_percentage:.2f}%")
-                            # print(f"Implied probabilities: {implied_probabilities}")
 
                             # shows main menu options before going back
                             print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Exit\n")
