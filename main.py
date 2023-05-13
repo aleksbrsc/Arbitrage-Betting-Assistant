@@ -90,36 +90,39 @@ def bet_calculator_menu():
 
 # function for entering the betting odds calculator 
 def betting_odds_calculator_menu():
-    # declaring the initial odds and stake floats
+    # declaring the initial odds, odds type, stake, and default enabling the odds loop
     odds = 0.0
     stake = 0.0
     odds_type = "decimal"
     odds_loop = True
 
+    # confirm type of odds
     print("\nPlease enter the type of odds ('american' or 'decimal'):")
     while odds_loop:
         try:
             odds_type = input("\u001b[90m> \u001b[0m")
         except: pass
+        # stopping the odds loop if type is either american or decimal
         if odds_type == "american":
-            odds_loop = False
+            odds_loop = False 
         elif odds_type == 'decimal':
             odds_loop = False
         else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:\n")
 
+    # calculate bet
     print("\nPlease enter the odds:")
     while True:
         try:
             odds = float(input("\u001b[90m> \u001b[0m"))
         except: pass
-        if odds > 1 or odds_type == 'american':
+        if (odds_type == "decimal" and odds > 1) or (odds_type == 'american' and (odds < -100 or 100 < odds)):
             print("\nPlease enter the stake amount:")
             while True:
                 try:
                     stake = float(input("\u001b[90m> \u001b[0m"))
                 except: pass
                 if stake > 0:
-                    
+                    # convert odds to decimal if type is american
                     if odds_type == 'american':
                         odds = american_to_decimal(odds)
 
@@ -139,7 +142,10 @@ def betting_odds_calculator_menu():
                 else:
                     print("\nInvalid stake (must be a float greater than 0 with no dollar sign). Please try again:\n")
         else:
-            print("\nInvalid odds (must be a number, decimal odds must be greater than 1). Please try again:\n")
+            if odds_type == "decimal":
+                print("\nInvalid odds (decimal odds must be greater than 1). Please try again:\n")
+            elif odds_type == "american":
+                print("\nInvalid odds (american odds must be greater than 100 or less than -100). Please try again:\n")
 
 # function for converting american odds to decimal odds
 def american_to_decimal(odds):
@@ -151,7 +157,37 @@ def american_to_decimal(odds):
 
 # function for entering the arbitrage calculator 
 def arbitrage_calculator_menu():
-    print("")
+    # declaring local variables
+    odds_list = []
+    odds_type = "decimal"
+    odds_type_loop = True
+    odds_loop = True
+
+    # confirm type of odds
+    print("\nPlease enter the type of all odds ('american' or 'decimal'):")
+    while odds_type_loop:
+        try:
+            odds_type = input("\u001b[90m> \u001b[0m")
+        except: pass
+        if odds_type == "american":
+            odds_type_loop = False
+        elif odds_type == 'decimal':
+            odds_type_loop = False
+        else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:\n")
+
+    # calculate arbitrage
+    print("\nPlease enter the odds in a comma-separated list (e.g. 2.5, 3.2, ...)")
+    while odds_loop:
+        try:
+            odds_string = input("\u001b[90m> \u001b[0m")
+        except: pass
+        # convert string to list
+        odds_list = odds_string.split(", ")
+        # validate each element of the list before proceeding
+        if odds_type == "decimal":
+            for i in odds_list:
+                if float(i) > 1:
+                    break
 
 # starts program
 run()

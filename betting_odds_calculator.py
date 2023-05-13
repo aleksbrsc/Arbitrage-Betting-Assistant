@@ -1,4 +1,3 @@
-# creates a bet with purpose to calculating wins or losses for bets
 class BettingOddsCalculator:
     def __init__(self, odds, stake):
         self.odds = odds
