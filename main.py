@@ -93,19 +93,36 @@ def betting_odds_calculator_menu():
     # declaring the initial odds and stake floats
     odds = 0.0
     stake = 0.0
+    odds_type = "decimal"
+    odds_loop = True
 
-    print("\nPlease enter the decimal odds:")
+    print("\nPlease enter the type of odds ('american' or 'decimal'):")
+    while odds_loop:
+        try:
+            odds_type = input("\u001b[90m> \u001b[0m")
+        except: pass
+        if odds_type == "american":
+            odds_loop = False
+        elif odds_type == 'decimal':
+            odds_loop = False
+        else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:\n")
+
+    print("\nPlease enter the odds:")
     while True:
         try:
             odds = float(input("\u001b[90m> \u001b[0m"))
         except: pass
-        if odds > 0:
+        if odds > 1 or odds_type == 'american':
             print("\nPlease enter the stake amount:")
             while True:
                 try:
                     stake = float(input("\u001b[90m> \u001b[0m"))
                 except: pass
                 if stake > 0:
+                    
+                    if odds_type == 'american':
+                        odds = american_to_decimal(odds)
+
                     # create new betting odds calculator object with given odds, stake
                     new_bet = betting_odds_calculator.BettingOddsCalculator(odds, stake)
                     
@@ -122,7 +139,15 @@ def betting_odds_calculator_menu():
                 else:
                     print("\nInvalid stake (must be a float greater than 0 with no dollar sign). Please try again:\n")
         else:
-            print("\nInvalid odds (must be a float greater than 0). Please try again:\n")
+            print("\nInvalid odds (must be a number, decimal odds must be greater than 1). Please try again:\n")
+
+# function for converting american odds to decimal odds
+def american_to_decimal(odds):
+    if odds >= 0:
+        decimal_odds = 1 + (odds / 100)
+    else:
+        decimal_odds = 1 + (100 / abs(odds))
+    return decimal_odds
 
 # function for entering the arbitrage calculator 
 def arbitrage_calculator_menu():
