@@ -158,10 +158,12 @@ def american_to_decimal(odds):
 # function for entering the arbitrage calculator 
 def arbitrage_calculator_menu():
     # declaring local variables
+    stake = 0
     odds_list = []
+    float_odds_list = []
     odds_type = "decimal"
     odds_type_loop = True
-    odds_loop = True
+    stake_loop = True
 
     # confirm type of odds
     print("\nPlease enter the type of all odds ('american' or 'decimal'):")
@@ -169,25 +171,91 @@ def arbitrage_calculator_menu():
         try:
             odds_type = input("\u001b[90m> \u001b[0m")
         except: pass
-        if odds_type == "american":
+        if odds_type == "american" or odds_type == 'a':
+            odds_type = "american"
             odds_type_loop = False
-        elif odds_type == 'decimal':
+        elif odds_type == 'decimal' or odds_type == 'd':
+            odds_type = "decimal"
             odds_type_loop = False
-        else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:\n")
+        else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:")
+
+    # confirm stake
+    print("\nPlease enter the stake:")
+    while stake_loop:
+        tried_stake = -1
+        try:
+            tried_stake = float(input("\u001b[90m> \u001b[0m"))
+        except: pass
+        if tried_stake > 0:
+            stake = tried_stake
+            stake_loop = False
+        else: print("\nInvalid stake (must be greater than 0). Please try again:")
 
     # calculate arbitrage
     print("\nPlease enter the odds in a comma-separated list (e.g. 2.5, 3.2, ...)")
-    while odds_loop:
+    while True:
         try:
             odds_string = input("\u001b[90m> \u001b[0m")
         except: pass
         # convert string to list
         odds_list = odds_string.split(", ")
+        if len(odds_list) == 1:
+            print(f"\nSet must contain at least 2 odds.")
         # validate each element of the list before proceeding
-        if odds_type == "decimal":
-            for i in odds_list:
-                if float(i) > 1:
-                    break
+        num_of_odds = 0
+        for odd in odds_list:
+            try:
+                odd_float = float(odd)
+                if (odds_type == "decimal" and odd_float > 1) or (odds_type == 'american' and (odd_float < -100 or 100 < odd_float)):
+                    num_of_odds += 1
+                    float_odds_list.append(odd_float)
+                    if num_of_odds > 1:
+                        if num_of_odds == len(odds_list): # if all elements (odds) valid
+                            # convert to decimal if american
+                            if odds_type == "american":
+                                for odd in float_odds_list:
+                                    odd = american_to_decimal(odd)
+
+                            # create new calculator and calculated variables
+                            arb_calc = arbitrage_calculator.ArbitrageCalculator(stake, float_odds_list)
+                            
+                            # perform the calculations on variables
+                            total_implied_probability = arb_calc.calc_total_implied_probability()
+                            hedged_stakes = arb_calc.calculate_hedged_stakes()
+
+                            # variable for whether arbitrage opportunity or not
+                            is_arbitrage = "(not an arbitrage)" # default message
+                            if total_implied_probability < 1:
+                                is_arbitrage = "(is an arbitrage)"
+
+                            # display formatted arb results
+                            formatted_total_implied_probability = "{:.2%}".format(total_implied_probability)
+                            # TODO: ADD FORMATTING HERE FOR HEDGED STAKES
+
+                            print("\nTotal Implied Probability:", formatted_total_implied_probability, is_arbitrage)
+                            print("Respective Hedged Stakes:", hedged_stakes) # TODO: REPLACE WITH FORMATTED HEDGED STAKES
+
+                            # # display formatted arb results
+                            # print(f"Arbitrage percentage: {arb_percentage:.2f}%")
+                            # print(f"Implied probabilities: {implied_probabilities}")
+
+                            # shows main menu options before going back
+                            print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Exit\n")
+                            return
+                else:
+                    print(f"\nInvalid set of odds. Must be a valid {odds_type} odd and comma-separated in the list.")
+                    if odds_type == 'american':
+                        print("(e.g. 300, 340, -140)\n")
+                    if odds_type == 'decimal':
+                        print("(e.g. 1.2, 1.63, 3.5)\n")
+                    break  
+            except ValueError:
+                print(f"\nInvalid odd value: {odd}. Must be a valid {odds_type} odd and comma-separated in the list.")
+                if odds_type == 'american':
+                    print("(e.g. 300, 340, -140)\n")
+                if odds_type == 'decimal':
+                    print("(e.g. 1.2, 1.63, 3.5)\n")
+                break
 
 # starts program
 run()
