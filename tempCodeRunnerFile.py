@@ -1,2 +1,1 @@
-
-            stake = tried_stake
+float(odd)

@@ -213,9 +213,8 @@ def arbitrage_calculator_menu():
                         if num_of_odds == len(odds_list): # if all elements (odds) valid
                             # convert to decimal if american
                             if odds_type == "american":
-                                for odd in float_odds_list:
-                                    odd = american_to_decimal(odd)
-
+                                for i in range(len(float_odds_list)):
+                                    float_odds_list[i] = american_to_decimal(float_odds_list[i])
                             # create new calculator and calculated variables
                             arb_calc = arbitrage_calculator.ArbitrageCalculator(stake, float_odds_list)
                             
