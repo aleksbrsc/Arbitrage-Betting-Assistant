@@ -16,13 +16,20 @@ bet_spaces = []
 # entering the create bet space menu and handling
 def create_bet_space_menu():
     # declaring local variables
-    odds = 0.0 
     odds_type = "decimal"
+    stake = 0
+    odds_list = []
+    float_odds_list = []
+
+    # loops
+    name_loop = True
     odds_type_loop = True
+    stake_loop = True
+    odds_list_loop = True
 
     # ask for bet space name, or let user exit 
     print('\nWhat would you like your Bet Space to be named?\n\u001b[90m(type "exit" to leave)\u001b[0m')
-    while True:
+    while name_loop:
         try:
             name = input("\u001b[90m> \u001b[0m").strip()
         except: pass
@@ -30,28 +37,91 @@ def create_bet_space_menu():
         if name == "exit":
             return
         if name != "":
-            # confirm type of odds
-            print("\nPlease enter the type of all odds for this Bet Space ('american' or 'decimal'):")
-            while odds_type_loop:
-                try:
-                    odds_type = input("\u001b[90m> \u001b[0m")
-                except: pass
-                if odds_type == "american" or odds_type == 'a':
-                    odds_type = "american"
-                    odds_type_loop = False
-                elif odds_type == 'decimal' or odds_type == 'd':
-                    odds_type = "decimal"
-                    odds_type_loop = False
-                else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:")
-            
-            
-
+            name_loop = False
+            break
         else:
             print("\nPlease enter a name for the Bet Space.")
 
+    # confirm type of odds
+    print("\nPlease enter the type of all odds for this Bet Space ('american' or 'decimal'):")
+    while odds_type_loop:
+        try:
+            odds_type = input("\u001b[90m> \u001b[0m")
+        except: pass
+        if odds_type == "american" or odds_type == 'a':
+            odds_type = "american"
+            odds_type_loop = False
+        elif odds_type == 'decimal' or odds_type == 'd':
+            odds_type = "decimal"
+            odds_type_loop = False
+        else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:")
 
+    # confirm list of odds
+    print("\nPlease enter the odds in a comma-separated list (e.g. 2.5, 3.2, ...)")
+    while odds_list_loop:
+        try:
+            odds_string = input("\u001b[90m> \u001b[0m")
+        except: pass
+        # convert string to list
+        odds_list = odds_string.split(", ")
+        if len(odds_list) == 1:
+            print(f"\nSet must contain at least 2 odds.")
+        # validate each element of the list before proceeding
+        num_of_odds = 0
+        for odd in odds_list:
+            try:
+                odd_float = float(odd)
+                if (odds_type == "decimal" and odd_float > 1) or (odds_type == 'american' and (odd_float < -100 or 100 < odd_float)):
+                    num_of_odds += 1
+                    float_odds_list.append(odd_float)
+                    if num_of_odds > 1:
+                        if num_of_odds == len(odds_list): # if all elements (odds) valid
+                            # confirm stake
+                            print("\nPlease enter the stake:")
+                            while stake_loop:
+                                tried_stake = -1
+                                try:
+                                    tried_stake = float(input("\u001b[90m> \u001b[0m"))
+                                except: pass
+                                if tried_stake > 0:
+                                    stake = tried_stake
+                                    stake_loop = False
+                                else: print("\nInvalid stake (must be greater than 0). Please try again:")
 
+                            # success message
+                            print("\n\u001b[32mBet Space Successfully Created!\u001b[0m")
 
+                            # format attributes
+                            formatted_odds_list = list_to_string(float_odds_list)
+                            formatted_stake = "${:.2f}".format(stake)
+
+                            # display attributes of bet space 
+                            print("\nBet Space Name:", name)
+                            print("Odds Type:", odds_type)
+                            print("Odds List:", formatted_odds_list) 
+                            print("Stake:", formatted_stake)
+
+                            # create bet space and add to collection
+                            new_bet_space = bet_space.BetSpace(name, odds_type, odds_list, stake)
+                            bet_spaces.append(new_bet_space)
+
+                            # shows main menu options before going back
+                            print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
+                            return
+                else:
+                    print(f"\nInvalid set of odds. Must be a valid {odds_type} odd and comma-separated in the list.")
+                    if odds_type == 'american':
+                        print("(e.g. 300, 340, -140)")
+                    if odds_type == 'decimal':
+                        print("(e.g. 1.2, 1.63, 3.5)")
+                    break  
+            except ValueError:
+                print(f"\nInvalid odd value: {odd}. Must be a valid {odds_type} odd and comma-separated in the list.")
+                if odds_type == 'american':
+                    print("(e.g. 300, 340, -140)")
+                if odds_type == 'decimal':
+                    print("(e.g. 1.2, 1.63, 3.5)")
+                break
 
 
 
@@ -302,7 +372,7 @@ def arbitrage_calculator_menu():
                             formatted_roi = "{:.2%}".format(roi)
 
                             print("\nTotal Implied Probability:", formatted_total_implied_probability, is_arbitrage)
-                            print("Respective Hedged Stakes:", formatted_hedged_stakes) # TODO: REPLACE WITH FORMATTED HEDGED STAKES
+                            print("Respective Hedged Stakes:", formatted_hedged_stakes)
                             print("Payout:", formatted_payout)
                             if pnl > 0:
                                 print("PNL:\u001b[32m", formatted_pnl, "\u001b[0m")
