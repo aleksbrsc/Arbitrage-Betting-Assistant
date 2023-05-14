@@ -5,5 +5,5 @@ class BettingOddsCalculator:
     
     def calculate_payout(self):
         payout = self.stake * self.odds
-        return payout * 100
+        return payout
 

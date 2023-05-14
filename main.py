@@ -7,12 +7,24 @@ import arbitrage_calculator
 
 
 # variables
-first_run = True
-# create a collection of bet spaces
-# create a collection of bets
-# each bet is a list that has two dictionaries for the Team/Player:Odds 
+first_run = True # false after main menu title is displayed once
+# bet spaces is dictionary with a name of the bet space and the list as a value
+bet_spaces = {}
+bet_spaces["test_bet_space"] = []
+bet_spaces["test_bet_space"].append(["3, 4"])
+bet_spaces["test_bet_space"].append(100)
+print(bet_spaces)
 
-# function to start program
+# how to iterate through the value list of dictionary
+for element in bet_spaces["test_bet_space"]:
+    if isinstance(element, list):
+        for subelement in element:
+            print(subelement)
+
+# create a collection of bets
+# each bet is a list that has two dictionaries for the Team/Player:Odds
+
+# starts program
 def run():
     main_menu()
 
@@ -25,7 +37,7 @@ def main_menu():
         first_run = False
 
     # display main menu options
-    print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Bet Calculator\n[4] Quit\n")
+    print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
 
     # list of valid inputs for each of the three options
     cbs_options = ["create bet space", "create", "1", "one"]
@@ -49,7 +61,7 @@ def main_menu():
             quit()
         else:
             print("\nThat is not a valid option. Please try again.")
-            print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Bet Calculator\n[4] Quit\n")
+            print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
     
 # function for entering the cbs menu and handling
 def create_bet_space_menu():
@@ -62,14 +74,15 @@ def visit_bet_space_menu():
 
 # function for bet calculator
 def bet_calculator_menu():
-    # 
-    print("\nBET CALCULATORS\nSelect one of the following options:")
-    print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Exit\n")
+    # display title with options
+    print("\nBETTING CALCULATORS\nSelect one of the following options:")
+    print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Moneyline Converter\n[4] Exit\n")
 
     # list of valid inputs for each of the three options
     boc_options = ["betting odds calculator", "betting odds", "betting", "bet", "1", "one"]
     ac_options = ["arbitrage calculator", "arbitrage", "arb", "2", "two"]
-    quit_options = ["quit", "3", "three", "leave", "exit"]
+    ml_options = ["3", "three", "moneyline converter", "moneyline", "ml"]
+    quit_options = ["quit", "four", "4", "leave", "exit"]
     # forever loop prompts user input for the options, handles each option and repeats prompt on invalid input
     while True:
         # user input for the calculator options
@@ -80,13 +93,15 @@ def bet_calculator_menu():
             betting_odds_calculator_menu()
         elif selected_calc_option in ac_options:
             arbitrage_calculator_menu()
+        elif selected_calc_option in ml_options:
+            moneyline_converter_menu()
         elif selected_calc_option in quit_options:
             # displays main menu options before ending function call and going back to main menu loop 
-            print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Bet Calculators\n[4] Quit\n")
+            print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
             return
         else:
             print("\nThat is not a valid option. Please try again.")
-            print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Exit\n")
+            print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Moneyline Converter\n[4] Exit\n")
 
 # function for entering the betting odds calculator 
 def betting_odds_calculator_menu():
@@ -103,11 +118,13 @@ def betting_odds_calculator_menu():
             odds_type = input("\u001b[90m> \u001b[0m")
         except: pass
         # stopping the odds loop if type is either american or decimal
-        if odds_type == "american":
-            odds_loop = False 
-        elif odds_type == 'decimal':
+        if odds_type == "american" or odds_type == 'a':
+            odds_type = "american"
             odds_loop = False
-        else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:\n")
+        elif odds_type == 'decimal' or odds_type == 'd':
+            odds_type = "decimal"
+            odds_loop = False
+        else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:")
 
     # enter odds
     print("\nPlease enter the odds:")
@@ -139,15 +156,15 @@ def betting_odds_calculator_menu():
                     print("\nPayout: \u001b[32m" + formatted_payout + "\u001b[0m")
 
                     # shows main menu options before going back
-                    print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Exit\n")
+                    print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Moneyline Converter\n[4] Exit\n")
                     return
                 else:
                     print("\nInvalid stake (must be a float greater than 0 with no dollar sign). Please try again:\n")
         else:
             if odds_type == "decimal":
-                print("\nInvalid odds (decimal odds must be greater than 1). Please try again:\n")
+                print("\nInvalid odds (decimal odds must be greater than 1). Please try again:")
             elif odds_type == "american":
-                print("\nInvalid odds (american odds must be greater than 100 or less than -100). Please try again:\n")
+                print("\nInvalid odds (american odds must be greater than 100 or less than -100). Please try again:")
 
 # converts american odds to decimal odds
 def american_to_decimal(odds):
@@ -262,22 +279,74 @@ def arbitrage_calculator_menu():
                             print("ROI:", formatted_roi)
 
                             # shows main menu options before going back
-                            print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Exit\n")
+                            print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Moneyline Converter\n[4] Exit\n")
                             return
                 else:
                     print(f"\nInvalid set of odds. Must be a valid {odds_type} odd and comma-separated in the list.")
                     if odds_type == 'american':
-                        print("(e.g. 300, 340, -140)\n")
+                        print("(e.g. 300, 340, -140)")
                     if odds_type == 'decimal':
-                        print("(e.g. 1.2, 1.63, 3.5)\n")
+                        print("(e.g. 1.2, 1.63, 3.5)")
                     break  
             except ValueError:
                 print(f"\nInvalid odd value: {odd}. Must be a valid {odds_type} odd and comma-separated in the list.")
                 if odds_type == 'american':
-                    print("(e.g. 300, 340, -140)\n")
+                    print("(e.g. 300, 340, -140)")
                 if odds_type == 'decimal':
-                    print("(e.g. 1.2, 1.63, 3.5)\n")
+                    print("(e.g. 1.2, 1.63, 3.5)")
                 break
+
+# finds the implied probability of single given moneyline odds
+def moneyline_converter_menu():
+    # declaring local variables
+    odds = 0.0
+    odds_type = "decimal"
+    odds_type_loop = True
+
+    # confirm type of odds
+    print("\nPlease enter the type of all odds ('american' or 'decimal'):")
+    while odds_type_loop:
+        try:
+            odds_type = input("\u001b[90m> \u001b[0m")
+        except: pass
+        if odds_type == "american" or odds_type == 'a':
+            odds_type = "american"
+            odds_type_loop = False
+        elif odds_type == 'decimal' or odds_type == 'd':
+            odds_type = "decimal"
+            odds_type_loop = False
+        else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:")
+
+    print("\nPlease enter the odds:")
+    while True:
+        try:
+            odds = float(input("\u001b[90m> \u001b[0m"))
+        except: pass
+        # validates the odds in the user-input list
+        if (odds_type == "decimal" and odds > 1) or (odds_type == 'american' and (odds < -100 or 100 < odds)):
+            # convert odds to decimal if odds type is american
+            if odds_type == 'american':
+                odds = american_to_decimal(odds)
+
+            ip = 1 / odds
+            
+            # calculate implied probability and put it in dollar form
+            formatted_ip = "{:,.2%}".format(ip)
+
+            # print results
+            print("\nImplied Probability:", formatted_ip)
+
+            # shows main menu options before going back
+            print("\n[1] Betting Odds Calculator\n[2] Arbitrage Calculator\n[3] Moneyline Converter\n[4] Exit\n")
+            return
+        else:
+            if odds_type == "decimal":
+                print("\nInvalid odds (decimal odds must be greater than 1). Please try again:")
+            elif odds_type == "american":
+                print("\nInvalid odds (american odds must be greater than 100 or less than -100). Please try again:")
+
+
+    
 
 # starts program
 run()
