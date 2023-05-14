@@ -156,18 +156,18 @@ def visit_bet_space_menu():
         try:
             selected = (input("\u001b[90m> \u001b[0m"))
         except: pass
-        # selects the bet_space from list based off name
+        if selected == "exit":
+            print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
+            return
+        elif selected == "":
+            print('\nThat Bet Space does not exist, please try again.\n\u001b[90m(type "exit" to leave)\u001b[0m')
+                # selects the bet_space from list based off name
         for bet_space in bet_spaces:
             if selected == bet_space.name:
                 selected_bet_space = bet_space
 
                 # handling of bet space
                 print('\nWhat would you like to do with the\u001b[35m', selected_bet_space.name, '\u001b[0mBet Space?')
-
-        if selected_bet_space == "exit":
-            return
-        elif selected_bet_space == "":
-            print('\nThat Bet Space does not exist, please try again.\n\u001b[90m(type "exit" to leave)\u001b[0m')
     
     
 
@@ -225,7 +225,7 @@ def main_menu():
     # forever loop prompts user input for the options, handles each option and repeats prompt on invalid input
     while True:
         # user input for the main menu option
-        selected_main_option = input("")
+        selected_main_option = (input("\u001b[90m> \u001b[0m"))
 
         if selected_main_option in cbs_options:
             create_bet_space_menu()
@@ -234,13 +234,12 @@ def main_menu():
         elif selected_main_option in bet_options:
             bet_calculator_menu()
         elif selected_main_option in quit_options:
-            print("\nGoodbye.")
+            print("\nGoodbye.\n")
             quit()
         else:
             print("\nThat is not a valid option. Please try again.")
             print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
     
-
 # function for bet calculator
 def bet_calculator_menu():
     # display title with options
@@ -255,7 +254,7 @@ def bet_calculator_menu():
     # forever loop prompts user input for the options, handles each option and repeats prompt on invalid input
     while True:
         # user input for the calculator options
-        selected_calc_option = input("")
+        selected_calc_option = (input("\u001b[90m> \u001b[0m"))
 
         # handling user input for respective calculators
         if selected_calc_option in boc_options:
