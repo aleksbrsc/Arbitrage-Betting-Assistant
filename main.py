@@ -1,28 +1,65 @@
 # Basic moneyline arbitrage bet finder program 
 # calculates the discrepancies in odds across different bookmakers provided by user input and returns the arbitrage opportunities
 # for more info on arbitrage betting: https://en.wikipedia.org/wiki/Arbitrage_betting
-import arbitrage
+import bet_space
 import betting_odds_calculator
 import arbitrage_calculator
 
+# switches false first time after title is displayed, so no reappearance
+first_run = True # 
 
-# variables
-first_run = True # false after main menu title is displayed once
-# bet spaces is dictionary with a name of the bet space and the list as a value
-bet_spaces = {}
-bet_spaces["test_bet_space"] = []
-bet_spaces["test_bet_space"].append(["3, 4"])
-bet_spaces["test_bet_space"].append(100)
-print(bet_spaces)
 
-# how to iterate through the value list of dictionary
-for element in bet_spaces["test_bet_space"]:
-    if isinstance(element, list):
-        for subelement in element:
-            print(subelement)
+# SCRATCH ALL BET SPACE STUFF HERE AND DO OBJECT ORIENTED APPROACH
+# bet spaces is a dictionary with a name of the bet space and the corresponding list as a value
+bet_spaces = []
 
-# create a collection of bets
-# each bet is a list that has two dictionaries for the Team/Player:Odds
+# entering the create bet space menu and handling
+def create_bet_space_menu():
+    # declaring local variables
+    odds = 0.0 
+    odds_type = "decimal"
+    odds_type_loop = True
+
+    # ask for bet space name, or let user exit 
+    print('\nWhat would you like your Bet Space to be named?\n\u001b[90m(type "exit" to leave)\u001b[0m')
+    while True:
+        try:
+            name = input("\u001b[90m> \u001b[0m").strip()
+        except: pass
+        # validates the odds in the user-input list
+        if name == "exit":
+            return
+        if name != "":
+            # confirm type of odds
+            print("\nPlease enter the type of all odds for this Bet Space ('american' or 'decimal'):")
+            while odds_type_loop:
+                try:
+                    odds_type = input("\u001b[90m> \u001b[0m")
+                except: pass
+                if odds_type == "american" or odds_type == 'a':
+                    odds_type = "american"
+                    odds_type_loop = False
+                elif odds_type == 'decimal' or odds_type == 'd':
+                    odds_type = "decimal"
+                    odds_type_loop = False
+                else: print("\nInvalid type of odds (must be 'american' or 'decimal'). Please try again:")
+            
+            
+
+        else:
+            print("\nPlease enter a name for the Bet Space.")
+
+
+
+
+
+
+
+
+
+
+
+
 
 # starts program
 def run():
@@ -63,10 +100,7 @@ def main_menu():
             print("\nThat is not a valid option. Please try again.")
             print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
     
-# function for entering the cbs menu and handling
-def create_bet_space_menu():
-    # ask for bet space name, or let user exit 
-    print('\nWhat would you like your Bet Space to be named?\n\u001b[90m(type "exit" to leave)\u001b[0m')
+
 
 # function for entering the vbs menu and handling
 def visit_bet_space_menu():
