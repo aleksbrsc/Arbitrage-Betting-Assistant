@@ -137,6 +137,7 @@ def visit_bet_space_menu():
     # declaring local variables
     bet_space_names = [] 
     selected_bet_space = ""
+    bet_space_options_loop = True
 
     # check if no Bet Spaces made
     if bet_spaces == []:
@@ -146,8 +147,8 @@ def visit_bet_space_menu():
     
     # display names of all Bet Spaces
     print("\nYou have the following Bet Spaces:")
-    for bet_space in bet_spaces:
-        bet_space_names.append(bet_space.name)
+    for bs in bet_spaces:
+        bet_space_names.append(bs.name)
     print(list_to_string(bet_space_names))
 
     # selection of bet space
@@ -156,30 +157,54 @@ def visit_bet_space_menu():
         try:
             selected = (input("\u001b[90m> \u001b[0m"))
         except: pass
+        for bs in bet_spaces:
+            if selected == bs.name:
+                selected_bet_space = bs
         if selected == "exit":
             print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
             return
+        elif selected == "view":
+            print("\nYou have the following Bet Spaces:")
+            print(list_to_string(bet_space_names))
+            print('\nWhich Bet Space would you like to select?\n\u001b[90m(type "exit" to leave)\u001b[0m')
         elif selected == "":
-            print('\nThat Bet Space does not exist, please try again.\n\u001b[90m(type "exit" to leave)\u001b[0m')
-                # selects the bet_space from list based off name
-        for bet_space in bet_spaces:
-            if selected == bet_space.name:
-                selected_bet_space = bet_space
-
-                # handling of bet space
+            print('\nThat Bet Space does not exist, please try again.\n\u001b[90m(type "exit" to leave or "view" to see the list)\u001b[0m')
+                # selects the bet space from list based off name
+        else:
+            # handling of the bet space once its been selected
+            if type(selected_bet_space) == bet_space.BetSpace:
+                # bet space options
                 print('\nWhat would you like to do with the\u001b[35m', selected_bet_space.name, '\u001b[0mBet Space?')
-    
-    
+                print("\n[1] Find Total Implied Probability\n[2] Find Arbitrage Opportunity\n[3] Leave\n")
+                
+                ftip_options = ["1", "one", "find total implied probability"]
+                fao_options = ["find arbitrage opportunity", "arb", "2", "two"]
+                leave_options = ["quit", "3", "three", "leave", "exit"]
+                
+                while bet_space_options_loop:
+                    # user input for the main menu option
+                    selected_main_option = (input("\u001b[90m> \u001b[0m"))
 
-    
+                    if selected_main_option in ftip_options:
+                        return
+                    elif selected_main_option in fao_options:
+                        return
+                    elif selected_main_option in leave_options: # resets selected option, goes back to previous loop
+                        selected_bet_space = ""
+                        bet_space_options_loop = False
+                        print("\nYou have the following Bet Spaces:")
+                        print(list_to_string(bet_space_names))
+                        print('\nWhich Bet Space would you like to select?\n\u001b[90m(type "exit" to leave)\u001b[0m')
+                    else:
+                        print("\nThat is not a valid option. Please try again.")
+                        print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
+                
 
-    # TODO: give further options to do here
-    # [1] Find Total Implied 
-    # [2] Find Arbitrage Opportunity
-    # [3] 
-    # [4] 
-    # other small ones like Add /Remove Odds, change stake, change name: can be saved for later
-    print("")
+
+            else:
+                print('\nThat Bet Space does not exist, please try again.\n\u001b[90m(type "exit" to leave or "view" to see the list)\u001b[0m')
+        
+    
 
 
 
