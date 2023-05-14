@@ -12,7 +12,7 @@ first_run = True #
 bet_spaces = []
 
 # dummy bet space for sake of testing
-bet_spaces.append(bet_space.BetSpace("Djokovic vs. Nadal", "decimal", [2, 3], 100))
+bet_spaces.append(bet_space.BetSpace("Djokovic vs. Nadal", "decimal", [3, 4], 100))
 
 # entering the create bet space menu and handling
 def create_bet_space_menu():
@@ -175,20 +175,52 @@ def visit_bet_space_menu():
             if type(selected_bet_space) == bet_space.BetSpace:
                 # bet space options
                 print('\nWhat would you like to do with the\u001b[35m', selected_bet_space.name, '\u001b[0mBet Space?')
-                print("\n[1] Find Total Implied Probability\n[2] Find Arbitrage Opportunity\n[3] Leave\n")
+                print("\n[1] Find Arbitrage Opportunity\n[2] Leave\n")
                 
-                ftip_options = ["1", "one", "find total implied probability"]
-                fao_options = ["find arbitrage opportunity", "arb", "2", "two"]
-                leave_options = ["quit", "3", "three", "leave", "exit"]
+                fao_options = ["find arbitrage opportunity", "arb", "1", "one"]
+                leave_options = ["quit", "2", "two", "leave", "exit"]
                 
                 while bet_space_options_loop:
-                    # user input for the main menu option
-                    selected_main_option = (input("\u001b[90m> \u001b[0m"))
+                    # creating new calculator with the given bet space's stake and odds list
+                    arb_calc = arbitrage_calculator.ArbitrageCalculator(selected_bet_space.stake, selected_bet_space.odds_list) 
 
-                    if selected_main_option in ftip_options:
-                        return
-                    elif selected_main_option in fao_options:
-                        return
+                    # user input for the main menu option
+                    try:
+                        selected_main_option = (input("\u001b[90m> \u001b[0m"))
+                    except: pass
+                    if selected_main_option in fao_options: # find arbitrage opportunity
+                        # perform the necessary arbitrage calculations
+                        tip = arb_calc.calc_total_implied_probability()
+                        formatted_tip = "{:.2%}".format(tip)
+
+                        hedged_stakes = arb_calc.calculate_hedged_stakes()
+                        formatted_hedged_stakes = list_to_string(format_list_to_dollar(hedged_stakes))
+
+                        pnl = arb_calc.calculate_pnl()
+                        formatted_pnl = "${:.2f}".format(pnl)
+
+                        roi = arb_calc.calculate_roi()
+                        formatted_roi = "{:.2%}".format(roi)
+
+                        # display list of odds and the tip
+                        print("\nList of Odds for\u001b[35m", selected_bet_space.name + f"\u001b[0m: {list_to_string(selected_bet_space.odds_list)}")
+                        print(f"\nThe Total Implied Probability of these odds is {formatted_tip}")
+
+                        if tip < 1: # if tip shows an arbitrage opportunity
+                            print(f"It is under 100%, so there is an \u001b[32marbitrage opportunity\u001b[0m. You can hedge accordingly:")
+                            print(formatted_hedged_stakes)
+                            print(f"\nYour profits would be \u001b[32m{formatted_pnl}\u001b[0m, with an ROI of {formatted_roi}")
+                        elif tip > 1: # if tip shows no arbitrage opportunity
+                            print(f"It is over 100%, so there is \u001b[31mno arbitrage opportunity\u001b[0m. You can still hedge accordingly:")
+                            print(formatted_hedged_stakes)
+                            print(f"\nBut your loss would be \u001b[31m{formatted_pnl}\u001b[0m, with an ROI of {formatted_roi}")
+                        elif tip == 1: # if tip is 100%
+                            print(f"It is exactly 100%, so there is no profit or loss to be made. You can still hedge accordingly:")
+                            print(formatted_hedged_stakes)
+                            print(f"\nBut you would gain nothing.")
+                        
+                        print("\n[1] Find Arbitrage Opportunity\n[2] Leave\n")
+
                     elif selected_main_option in leave_options: # resets selected option, goes back to previous loop
                         selected_bet_space = ""
                         bet_space_options_loop = False
@@ -197,10 +229,7 @@ def visit_bet_space_menu():
                         print('\nWhich Bet Space would you like to select?\n\u001b[90m(type "exit" to leave)\u001b[0m')
                     else:
                         print("\nThat is not a valid option. Please try again.")
-                        print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
-                
-
-
+                        print("\n[1] Find Arbitrage Opportunity\n[2] Leave\n")
             else:
                 print('\nThat Bet Space does not exist, please try again.\n\u001b[90m(type "exit" to leave or "view" to see the list)\u001b[0m')
         

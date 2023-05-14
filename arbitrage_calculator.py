@@ -1,7 +1,7 @@
 class ArbitrageCalculator:
     def __init__(self, stake, odds_list):
-        self.odds_list = odds_list
         self.stake = stake
+        self.odds_list = odds_list
 
     def calc_total_implied_probability(self):
         total_implied_probability = 0
