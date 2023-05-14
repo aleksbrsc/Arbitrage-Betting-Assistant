@@ -8,14 +8,16 @@ import arbitrage_calculator
 # switches false first time after title is displayed, so no reappearance
 first_run = True # 
 
-
-# SCRATCH ALL BET SPACE STUFF HERE AND DO OBJECT ORIENTED APPROACH
-# bet spaces is a dictionary with a name of the bet space and the corresponding list as a value
+# list of bet spaces
 bet_spaces = []
+
+# dummy bet space for sake of testing
+bet_spaces.append(bet_space.BetSpace("Djokovic vs. Nadal", "decimal", [2, 3], 100))
 
 # entering the create bet space menu and handling
 def create_bet_space_menu():
     # declaring local variables
+    name_not_duplicate = True # default value
     odds_type = "decimal"
     stake = 0
     odds_list = []
@@ -34,13 +36,19 @@ def create_bet_space_menu():
             name = input("\u001b[90m> \u001b[0m").strip()
         except: pass
         # validates the odds in the user-input list
-        if name == "exit":
-            return
-        if name != "":
+        for bet_space in bet_spaces:
+            if name == bet_space.name:
+                name_not_duplicate = False 
+        if name != "" and name_not_duplicate == True:
             name_loop = False
             break
+        if name == "exit":
+            return
         else:
-            print("\nPlease enter a name for the Bet Space.")
+            if name_not_duplicate == False:
+                print("\nA Bet Space with this name already exists.")
+                name_not_duplicate = True # reset to default value
+            print("\nPlease enter a valid name for the Bet Space.")
 
     # confirm type of odds
     print("\nPlease enter the type of all odds for this Bet Space ('american' or 'decimal'):")
@@ -123,6 +131,57 @@ def create_bet_space_menu():
                     print("(e.g. 1.2, 1.63, 3.5)")
                 break
 
+# function for entering the vbs menu and handling
+def visit_bet_space_menu():
+    # declaring local variables
+    bet_space_names = [] 
+    selected_bet_space = bet_spaces[0] # intially the dummy bet space
+
+    # check if no Bet Spaces made
+    if bet_spaces == []:
+        print("\nYou have no Bet Spaces, you must create at least one to visit.")
+        print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
+        return
+    
+    # display names of all Bet Spaces
+    print("\nYou have the following Bet Spaces:")
+    for bet_space in bet_spaces:
+        bet_space_names.append(bet_space.name)
+    print(list_to_string(bet_space_names))
+
+    print('\Which Bet Space would you like to select?\n\u001b[90m(type "exit" to leave)\u001b[0m')
+    select_bet_space_loop = True
+    while select_bet_space_loop:
+        try:
+            selected = (input("\u001b[90m> \u001b[0m"))
+        except: pass
+        # selects the bet_space from list based off name
+        for bet_space in bet_spaces:
+            if selected == bet_space.name:
+                selected_bet_space = bet_space
+
+    
+
+    # TODO: give further options to do here
+    # [1] Find Total Implied 
+    # [2] Find Arbitrage Opportunity
+    # [3] 
+    # [4] 
+    # other small ones like Add /Remove Odds, change stake, change name: can be saved for later
+    print("")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -170,11 +229,6 @@ def main_menu():
             print("\nThat is not a valid option. Please try again.")
             print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
     
-
-
-# function for entering the vbs menu and handling
-def visit_bet_space_menu():
-    print("\n")
 
 # function for bet calculator
 def bet_calculator_menu():
