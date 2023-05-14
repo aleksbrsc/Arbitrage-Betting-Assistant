@@ -35,6 +35,9 @@ def create_bet_space_menu():
         try:
             name = input("\u001b[90m> \u001b[0m").strip()
         except: pass
+        if name == "exit":
+            print("\n[1] Create Bet Space\n[2] Visit Bet Spaces\n[3] Betting Calculators\n[4] Quit\n")
+            return
         # validates the odds in the user-input list
         for bet_space in bet_spaces:
             if name == bet_space.name:
@@ -42,13 +45,11 @@ def create_bet_space_menu():
         if name != "" and name_not_duplicate == True:
             name_loop = False
             break
-        if name == "exit":
-            return
         else:
             if name_not_duplicate == False:
                 print("\nA Bet Space with this name already exists.")
                 name_not_duplicate = True # reset to default value
-            print("\nPlease enter a valid name for the Bet Space.")
+            print('\nPlease enter a valid name for the Bet Space or type "exit"')
 
     # confirm type of odds
     print("\nPlease enter the type of all odds for this Bet Space ('american' or 'decimal'):")
@@ -135,7 +136,7 @@ def create_bet_space_menu():
 def visit_bet_space_menu():
     # declaring local variables
     bet_space_names = [] 
-    selected_bet_space = bet_spaces[0] # intially the dummy bet space
+    selected_bet_space = ""
 
     # check if no Bet Spaces made
     if bet_spaces == []:
@@ -149,9 +150,9 @@ def visit_bet_space_menu():
         bet_space_names.append(bet_space.name)
     print(list_to_string(bet_space_names))
 
-    print('\Which Bet Space would you like to select?\n\u001b[90m(type "exit" to leave)\u001b[0m')
-    select_bet_space_loop = True
-    while select_bet_space_loop:
+    # selection of bet space
+    print('\nWhich Bet Space would you like to select?\n\u001b[90m(type "exit" to leave)\u001b[0m')
+    while True:
         try:
             selected = (input("\u001b[90m> \u001b[0m"))
         except: pass
@@ -159,6 +160,16 @@ def visit_bet_space_menu():
         for bet_space in bet_spaces:
             if selected == bet_space.name:
                 selected_bet_space = bet_space
+
+                # handling of bet space
+                print('\nWhat would you like to do with the\u001b[35m', selected_bet_space.name, '\u001b[0mBet Space?')
+
+        if selected_bet_space == "exit":
+            return
+        elif selected_bet_space == "":
+            print('\nThat Bet Space does not exist, please try again.\n\u001b[90m(type "exit" to leave)\u001b[0m')
+    
+    
 
     
 
